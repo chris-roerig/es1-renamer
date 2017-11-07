@@ -50,12 +50,11 @@ void main()
     {
       copy(name, outfile);
       writeln(name, " -----> ", outfile);
+      i++;
     }
     catch (FileException ex) 
     {
       writeln("Failed to copy ", name);
     }
-
-    i++;
   }
 }
