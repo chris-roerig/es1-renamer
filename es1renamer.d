@@ -39,7 +39,6 @@ bool is16Bit(string path)
 
     return data[0] == 16;
 }
-
 // returns only 16 bit wav files found in the input folder
 auto wavFiles()
 {
@@ -52,16 +51,33 @@ string[] copySamples(string outpath)
 {
   int i = 0;
   string[] rows;
+  ulong totalBytes = 0;
+  ulong mb = 0;
 
   foreach (string name; wavFiles())
   {
+    auto file = File(name, "r");
+    ulong filesize = file.size;
+    file.close();
+
+    // max mem is 6mb 
+    if (totalBytes + filesize > 6000000)
+    {
+      writeln("Max filesize reached (", totalBytes * 0.000001, "mb out of 6mb)");
+      return rows;
+    }
+    else
+    {
+      totalBytes += filesize;
+    }
+
     string outfile = format(outpath ~"/%02d.wav", i);
-    
+
     // copy file to target
     try
     {
       copy(name, outfile);
-      writeln(name, " -----> ", outfile);
+      writeln(outfile, " <----- ", name, " ", filesize);
       rows ~= baseName(name) ~ "," ~ baseName(outfile);
       i++;
     }
@@ -70,6 +86,8 @@ string[] copySamples(string outpath)
       writeln("Failed to copy ", name, ": ", e.msg);
     }
   }
+
+  writeln(totalBytes * 0.000001, "mb converted");
 
   return rows;
 }
