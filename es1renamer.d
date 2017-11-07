@@ -29,9 +29,8 @@ bool isWav(string path)
 
 void main()
 {
-  string[] files;
-
   int i = 0;
+
   foreach (string name; dirEntries("input", SpanMode.depth))
   {
     if(!isWav(name))
@@ -56,5 +55,7 @@ void main()
     {
       writeln("Failed to copy ", name);
     }
+
+    i++;
   }
 }
